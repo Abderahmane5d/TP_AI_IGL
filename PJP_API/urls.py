@@ -1,14 +1,16 @@
-from django.urls import path 
+from django.urls import path
 from . import views
 
 urlpatterns = [
+
+
     path('', views.apiOverview, name="api-overview"),
 
-    path('message_list',views.messageList, name='message_list'),
-    path('message_list/<str:pk>',views.messageDetail, name='message_list'),
+    path('message_list', views.messageList, name='message_list'),
+    path('message_list/<str:pk>', views.messageDetail, name='message_list'),
     path('message_create', views.messageCreate, name='message_create'),
-    path('message_update/<str:pk>',views.messageUpdate, name='message_update'),
-    path('message_delete/<str:pk>',views.messageDelete, name='message_delete'),
+    path('message_update/<str:pk>', views.messageUpdate, name='message_update'),
+    path('message_delete/<str:pk>', views.messageDelete, name='message_delete'),
 
     path('ai_list', views.aiList, name='ai_list'),
     path('ai_list/<str:pk>', views.aiDetail, name='ai_list'),
@@ -25,5 +27,6 @@ urlpatterns = [
 
     path('favories_list', views.favorieList, name='favories_list'),
 
-    path('sign_up', views.signUpView, name='sign_up')
+    path("login", views.logIn, name='log in'),
+    path("signup", views.signUp, name='Sign Up')
 ]

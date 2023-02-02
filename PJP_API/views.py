@@ -15,35 +15,68 @@ from django.contrib.auth import authenticate, login
 # from rest_framework.fields import CurrentUserDefault
 
 # Create your views here.
+
+
+@api_view(["POST"])
+def logIn(request):
+    email = request.data['email']
+    user = UserModel.objects.all().filter(email=email)
+    if user:
+        # utilisateur existe
+        user = UserModel.objects.get(email=email)
+        userData = UserModelSerializer(user)
+
+        return Response(userData.data)
+    else:
+        # utilisateur n'existe pas
+        response = {
+            "email": "no user"
+        }
+        return Response(response)
+
+
+@api_view(["POST"])
+def signUp(request):
+
+    serializer = UserModelSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+    return Response(serializer.data)
+
+
 @api_view(['GET'])
 def apiOverview(request):
     api_urls = {
-        'somthing':'/something/',
-        'overview':'/'
+        'somthing': '/something/',
+        'overview': '/'
     }
     return Response(api_urls)
+
 
 @api_view(['GET'])
 def messageList(request):
     messages = Message.objects.filter(destination=request.user.id)
     print(request.user)
     print(type(messages))
-    serializer = MessageSerializer(messages, many = True)
+    serializer = MessageSerializer(messages, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def messageDetail(request, pk):
-    message = Message.objects.get(id=pk) ###### union
+    message = Message.objects.get(id=pk)  # union
     serializer = MessageSerializer(message, many=False)
     return Response(serializer.data)
 
+
 @api_view(['POST'])
 def messageCreate(request):
-    request.data['utilisateur']=request.user.id
+    request.data['utilisateur'] = request.user.id
     serializer = MessageSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
     return Response(serializer.data)
+
 
 @api_view(['POST'])
 def messageUpdate(request, pk):
@@ -53,6 +86,7 @@ def messageUpdate(request, pk):
         serializer.save()
     return Response(serializer.data)
 
+
 @api_view(['DELETE'])
 def messageDelete(request, pk):
     message = Message.objects.get(id=pk)
@@ -61,31 +95,34 @@ def messageDelete(request, pk):
 
 # AI API
 
-@api_view(['GET']) ################### ordre
+
+@api_view(['GET'])  # ordre
 def aiList(request):
     # user = CurrentUserDefault()
     print(request.user.id)
     # AIs = AI.objects.all().filter(owner=request.user.id).order_by('-id')
     AIs = AI.objects.all().order_by('-id').exclude(owner=request.user.id)
-    serializer = AiSreializer(AIs, many = True)
+    serializer = AiSreializer(AIs, many=True)
     return Response(serializer.data)
 
-@api_view(['GET']) ################### ordre
+
+@api_view(['GET'])  # ordre
 def myAiList(request):
     # user = CurrentUserDefault()
     print(request.user.id)
     AIs = AI.objects.all().filter(owner=request.user.id).order_by('-id')
     print(AIs)
-    serializer = AiSreializer(AIs, many = True)
+    serializer = AiSreializer(AIs, many=True)
     return Response(serializer.data)
 
-@api_view(['GET']) ################### ordre
+
+@api_view(['GET'])  # ordre
 def AiSignal(request):
     # user = CurrentUserDefault()
     print(request.user.id)
     AIs = AI.objects.all().filter(Signal=True).order_by('-id')
     print(AIs)
-    serializer = AiSreializer(AIs, many = True)
+    serializer = AiSreializer(AIs, many=True)
     return Response(serializer.data)
 
 
@@ -95,11 +132,12 @@ def aiDetail(request, pk):
     serializer = AiSreializer(ai, many=False)
     return Response(serializer.data)
 
+
 @api_view(['POST'])
 def aiCreate(request):
-    
-    request.data['owner']=request.user.id
-    request.data['Signal']=True
+
+    request.data['owner'] = request.user.id
+    request.data['Signal'] = True
     serializer = AiSreializer(data=request.data)
     print()
     print(request.data)
@@ -109,6 +147,7 @@ def aiCreate(request):
 
     return Response(serializer.data)
 
+
 @api_view(['POST'])
 def aiUpdate(request, pk):
     ai = AI.objects.get(id=pk)
@@ -117,24 +156,27 @@ def aiUpdate(request, pk):
         serializer.save()
     return Response(serializer.data)
 
+
 @api_view(['DELETE'])
 def aiDelete(request, pk):
     ai = AI.objects.filter(owner=request.user.id).get(id=pk)
     ai.delete()
     return Response("deleted successfully")
 
-@api_view(['GET']) ################### ordre
+
+@api_view(['GET'])  # ordre
 def favorieList(request):
     # user = CurrentUserDefault()
     print(request.user)
     # favories = Favories.objects.all()
     favories = Favories.objects.all().filter(user=request.user.id).order_by('-id')
-    serializer = FavoriesSerializer(favories, many = True)
+    serializer = FavoriesSerializer(favories, many=True)
     return Response(serializer.data)
 
-@api_view(['GET']) ################### ordre
+
+@api_view(['GET'])  # ordre
 def aiSearch(request):
-    pk = request.query_params.get('kw') ######################## ************* all
+    pk = request.query_params.get('kw')  # ************* all
     keys = pk.split('-')
     lookup = Q(titre__icontains=keys[0]) | Q(description__icontains=keys[0])
     print()
@@ -143,9 +185,10 @@ def aiSearch(request):
     AIs = AI.objects.all().filter(lookup)
     for k in keys:
         lookup = Q(titre__icontains=k) | Q(description__icontains=k)
-        AIs= AIs.union(AI.objects.all().filter(lookup))
-    serializer = AiSreializer(AIs, many = True)
+        AIs = AIs.union(AI.objects.all().filter(lookup))
+    serializer = AiSreializer(AIs, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET'])
 def aiSearchMixte(request):
@@ -155,13 +198,14 @@ def aiSearchMixte(request):
     date_debut = request.query_params.get('date_debut')
     date_fin = request.query_params.get('date_fin')
     ai = AI.objects.all()
-    if type!="*":
+    if type != "*":
         ai = ai.filter(type=type)
     print(ai)
-    if wilaya!="*" and commune!="*":
-        lookup = Q(Location__wilaya__contains=wilaya) and Q(Location__commune__contains=commune)
-        ai=ai.filter(lookup)
-    elif wilaya!="*" and commune=="*":
+    if wilaya != "*" and commune != "*":
+        lookup = Q(Location__wilaya__contains=wilaya) and Q(
+            Location__commune__contains=commune)
+        ai = ai.filter(lookup)
+    elif wilaya != "*" and commune == "*":
 
         locations = Location.objects.filter(wilaya=wilaya).values()
         print
@@ -171,12 +215,12 @@ def aiSearchMixte(request):
         for loc in locations:
             ai_loc.union(AI.objects.filter(location=loc['id']))
         # lookup = Q(Location__wilaya__exact=wilaya)
-        ai=ai.intersection(ai_loc)
+        ai = ai.intersection(ai_loc)
         # ai=ai.filter(lookup)
         # locations = Location.objects.filter(wilaya=wilaya).values()
         # ai_loc = AI.objects.filter(location=locations[0]['id'])
         # ai=ai.intersection(ai_loc)
-    elif wilaya=="*" and commune!="*":
+    elif wilaya == "*" and commune != "*":
         locations = Location.objects.filter(commune=commune).values()
         print
         print(locations)
@@ -185,36 +229,37 @@ def aiSearchMixte(request):
         for loc in locations:
             ai_loc.union(AI.objects.filter(location=loc['id']))
         # lookup = Q(Location__wilaya__exact=wilaya)
-        ai=ai.intersection(ai_loc)
-    if date_debut!='*' and date_fin!='*':
-        ai=ai.filter(Q(created__range=[date_debut, date_fin]))  
+        ai = ai.intersection(ai_loc)
+    if date_debut != '*' and date_fin != '*':
+        ai = ai.filter(Q(created__range=[date_debut, date_fin]))
     serializer = AiSreializer(ai, many=True)
     return Response(serializer.data)
 
-@api_view(['POST'])
-def signUpView(request):
-    data=request.data
-    serializer = SignUpSerializer(data=data)
-    # print(serializer)
-    print()
-    print(data)
-    if serializer.is_valid():
-        serializer.save()
 
-        new_user = authenticate(nom=data['nom'],
-                                    prenom=data['prenom'],
-                                    password=data['password'],
-                                    username=data['email'],
-                                    telephone=data['telephone'],
-                                    adresse=data['adresse'],
-                                    )
-        
-        login(request, new_user, backend='django.contrib.auth.backends.ModelBackend')
+# @api_view(['POST'])
+# def signUpView(request):
+#     data = request.data
+#     serializer = SignUpSerializer(data=data)
+#     # print(serializer)
+#     print()
+#     print(data)
+#     if serializer.is_valid():
+#         serializer.save()
 
-        response = {
-            "message": "User created successfully",
-            "data": serializer.data
-        }
+#         new_user = authenticate(nom=data['nom'],
+#                                 prenom=data['prenom'],
+#                                 password=data['password'],
+#                                 username=data['email'],
+#                                 telephone=data['telephone'],
+#                                 adresse=data['adresse'],
+#                                 )
 
-        return Response(data=response, status=status.HTTP_201_CREATED)
-    return Response(data=serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
+#         login(request, new_user, backend='django.contrib.auth.backends.ModelBackend')
+
+#         response = {
+#             "message": "User created successfully",
+#             "data": serializer.data
+#         }
+
+#         return Response(data=response, status=status.HTTP_201_CREATED)
+#     return Response(data=serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
