@@ -27,23 +27,23 @@ class FavoriesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SignUpSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Utilisateur
-        fields = '__all__'
+# class SignUpSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Utilisateur
+#         fields = '__all__'
 
-    def validate(self, attrs):
-        email_exists = Utilisateur.object.all().filter(
-            email=attrs['email']).exists()
+#     def validate(self, attrs):
+#         email_exists = Utilisateur.object.all().filter(
+#             email=attrs['email']).exists()
 
-        if email_exists:
-            raise ValidationError(
-                "Enter another email this one has been already used")
-        return super().validate(attrs)
+#         if email_exists:
+#             raise ValidationError(
+#                 "Enter another email this one has been already used")
+#         return super().validate(attrs)
 
-    def create(self, validated_data):
-        password = validated_data.pop("password")
-        user = super().create(validated_data)
-        user.set_password(password)
-        user.save()
-        return user
+#     def create(self, validated_data):
+#         password = validated_data.pop("password")
+#         user = super().create(validated_data)
+#         user.set_password(password)
+#         user.save()
+#         return user

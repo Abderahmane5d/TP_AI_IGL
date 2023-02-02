@@ -47,61 +47,61 @@ class Location(models.Model):
 #     pass
 #     # compteGoogle = models.CharField(max_length=50) # à revoir
 #     # contact = models.OneToOneField(Contact, on_delete=models.CASCADE)
-class CustomAccountManager(BaseUserManager):
+# class CustomAccountManager(BaseUserManager):
 
-    def create_superuser(self, email, nom, prenom, adresse, telephone, password, **otherfields):
-        otherfields.setdefault('is_staff', True)
-        otherfields.setdefault('is_active', True)
-        otherfields.setdefault('is_superuser', True)
+#     def create_superuser(self, email, nom, prenom, adresse, telephone, password, **otherfields):
+#         otherfields.setdefault('is_staff', True)
+#         otherfields.setdefault('is_active', True)
+#         otherfields.setdefault('is_superuser', True)
 
-        if otherfields.get('is_staff') == False:
-            raise ValueError('superuser must have is_staff=True')
-        if otherfields.get('is_active') == False:
-            raise ValueError('superuser must have is_active=True')
-        if otherfields.get('is_superuser') == False:
-            raise ValueError('superuser must have is_superuser=True')
+#         if otherfields.get('is_staff') == False:
+#             raise ValueError('superuser must have is_staff=True')
+#         if otherfields.get('is_active') == False:
+#             raise ValueError('superuser must have is_active=True')
+#         if otherfields.get('is_superuser') == False:
+#             raise ValueError('superuser must have is_superuser=True')
 
-        return self.create_user(email, nom, prenom, adresse, telephone, password, **otherfields)
+#         return self.create_user(email, nom, prenom, adresse, telephone, password, **otherfields)
 
-    def create_user(self, email, nom, prenom, adresse, telephone, password, **otherfields):
-        if not email:
-            raise ValueError('tu doit introduire un email')
-        email = self.normalize_email(email)
-        # otherfilds.setdefault('username', email)
-        user = self.model(email=email, nom=nom, prenom=prenom,
-                          adresse=adresse, telephone=telephone, **otherfields)
-        user.set_password(password)
-        user.save()
-        return user
+#     def create_user(self, email, nom, prenom, adresse, telephone, password, **otherfields):
+#         if not email:
+#             raise ValueError('tu doit introduire un email')
+#         email = self.normalize_email(email)
+#         # otherfilds.setdefault('username', email)
+#         user = self.model(email=email, nom=nom, prenom=prenom,
+#                           adresse=adresse, telephone=telephone, **otherfields)
+#         user.set_password(password)
+#         user.save()
+#         return user
 
 
-# ajouter le nom et prenom ou bien le username
-class Utilisateur(AbstractBaseUser, PermissionsMixin):
-    nom = models.CharField(max_length=50, blank=True)
-    prenom = models.CharField(max_length=100, blank=True)
-    # the db can't have an instance of this model without this attribute
-    adresse = models.TextField(null=False, blank=True)
-    email = models.EmailField(('email address'), unique=True)  # email field
-    telephone = models.CharField(max_length=30, blank=True)
-    is_staff = models.BooleanField(default=False)
-    # for a secondary check (email sent to user they click and that activate the user and they can login)
-    is_active = models.BooleanField(default=False)
+# # ajouter le nom et prenom ou bien le username
+# class Utilisateur(AbstractBaseUser, PermissionsMixin):
+#     nom = models.CharField(max_length=50, blank=True)
+#     prenom = models.CharField(max_length=100, blank=True)
+#     # the db can't have an instance of this model without this attribute
+#     adresse = models.TextField(null=False, blank=True)
+#     email = models.EmailField(('email address'), unique=True)  # email field
+#     telephone = models.CharField(max_length=30, blank=True)
+#     is_staff = models.BooleanField(default=False)
+#     # for a secondary check (email sent to user they click and that activate the user and they can login)
+#     is_active = models.BooleanField(default=False)
 
-    object = CustomAccountManager()
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nom', 'prenom', 'adresse', 'telephone']
-    # AI_Favories = models.ManyToManyField(AI) # à revoir
-    # messages = models.ForeignKey(Message, on_delete=models.CASCADE)
-    # propre_AI = models.ForeignKey(AI, on_delete=models.CASCADE)
+#     object = CustomAccountManager()
+#     USERNAME_FIELD = 'email'
+#     REQUIRED_FIELDS = ['nom', 'prenom', 'adresse', 'telephone']
+#     # AI_Favories = models.ManyToManyField(AI) # à revoir
+#     # messages = models.ForeignKey(Message, on_delete=models.CASCADE)
+#     # propre_AI = models.ForeignKey(AI, on_delete=models.CASCADE)
 
-    def __str__(self) -> str:
-        return self.email
+#     def __str__(self) -> str:
+#         return self.email
 
 
 class Favories(models.Model):
     # related_name : bach ndiro l'accès mel jiha lokhra
     user = models.OneToOneField(
-        Utilisateur, on_delete=models.CASCADE, related_name='Favories')
+        UserModel, on_delete=models.CASCADE, related_name='Favories')
     annonce = models.ManyToManyField('AI')
 
 
@@ -110,9 +110,9 @@ class Message(models.Model):
     # contact = models.ForeignKey(Utilisateur, on_delete=models.CASCADE) # à revoir
     conetnt = models.TextField()  # null = False (default)
     utilisateur = models.ForeignKey(
-        Utilisateur, on_delete=models.CASCADE, related_name='messages')
+        UserModel, on_delete=models.CASCADE, related_name='messages')
     destination = models.ForeignKey(
-        Utilisateur, on_delete=models.CASCADE, related_name='notification')
+        UserModel, on_delete=models.CASCADE, related_name='notification')
 
     # def __str__(self) -> str:
     #     return self.conetnt
@@ -155,7 +155,7 @@ class AI(models.Model):
     location = models.ForeignKey(
         Location, on_delete=models.CASCADE)  # à revoir
     owner = models.ForeignKey(
-        Utilisateur, on_delete=models.CASCADE, related_name='anonces')
+        UserModel, on_delete=models.CASCADE, related_name='anonces')
     created = models.DateTimeField(auto_now_add=True)
     # AI_signalees = models.ForeignKey(Signal, on_delete= models.CASCADE, null=True) # admin
     Signal = models.BooleanField(default=False)

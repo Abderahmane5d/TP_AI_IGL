@@ -234,32 +234,3 @@ def aiSearchMixte(request):
         ai = ai.filter(Q(created__range=[date_debut, date_fin]))
     serializer = AiSreializer(ai, many=True)
     return Response(serializer.data)
-
-
-# @api_view(['POST'])
-# def signUpView(request):
-#     data = request.data
-#     serializer = SignUpSerializer(data=data)
-#     # print(serializer)
-#     print()
-#     print(data)
-#     if serializer.is_valid():
-#         serializer.save()
-
-#         new_user = authenticate(nom=data['nom'],
-#                                 prenom=data['prenom'],
-#                                 password=data['password'],
-#                                 username=data['email'],
-#                                 telephone=data['telephone'],
-#                                 adresse=data['adresse'],
-#                                 )
-
-#         login(request, new_user, backend='django.contrib.auth.backends.ModelBackend')
-
-#         response = {
-#             "message": "User created successfully",
-#             "data": serializer.data
-#         }
-
-#         return Response(data=response, status=status.HTTP_201_CREATED)
-#     return Response(data=serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
