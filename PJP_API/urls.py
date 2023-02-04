@@ -7,7 +7,7 @@ urlpatterns = [
     path('', views.apiOverview, name="api-overview"),
 
     path('message_list', views.messageList, name='message_list'),
-    path('message_list/<str:pk>', views.messageDetail, name='message_list'),
+    #path('message_list', views.messageDetail, name='message_list'),
     path('message_create', views.messageCreate, name='message_create'),
     path('message_update/<str:pk>', views.messageUpdate, name='message_update'),
     path('message_delete/<str:pk>', views.messageDelete, name='message_delete'),
@@ -16,7 +16,7 @@ urlpatterns = [
     path('ai_list/<str:pk>', views.aiDetail, name='ai_list'),
     path('ai_create', views.aiCreate, name='ai_create'),
     path('ai_update/<str:pk>', views.aiUpdate, name='ai_update'),
-    path('ai_delete/<str:pk>', views.aiDelete, name='ai_delete'),
+    path('ai_delete', views.aiDelete, name='ai_delete'),
 
     path('ai_signal', views.AiSignal, name='ai_signal'),
 
@@ -28,5 +28,6 @@ urlpatterns = [
     path('favories_list', views.favorieList, name='favories_list'),
 
     path("login", views.logIn, name='log in'),
-    path("signup", views.signUp, name='Sign Up')
+    path("signup", views.signUp, name='Sign Up'),
+    path('user', views.userDetail, name='user')
 ]

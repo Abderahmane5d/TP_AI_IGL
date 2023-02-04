@@ -108,7 +108,7 @@ class Favories(models.Model):
 class Message(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     # contact = models.ForeignKey(Utilisateur, on_delete=models.CASCADE) # à revoir
-    conetnt = models.TextField()  # null = False (default)
+    content = models.TextField()  # null = False (default)
     utilisateur = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name='messages')
     destination = models.ForeignKey(
@@ -152,8 +152,7 @@ class AI(models.Model):
                             max_length=22)  # null = False (default)
     category = models.CharField(
         choices=CategoryChoices.choices, max_length=16)  # null = False (default)
-    location = models.ForeignKey(
-        Location, on_delete=models.CASCADE)  # à revoir
+    location = models.CharField(max_length=100)
     owner = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name='anonces')
     created = models.DateTimeField(auto_now_add=True)

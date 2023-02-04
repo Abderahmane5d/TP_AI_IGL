@@ -17,6 +17,14 @@ from django.contrib.auth import authenticate, login
 # Create your views here.
 
 
+@api_view(['POST'])
+def userDetail(request):
+    pk = request.data['owner']
+    user = UserModel.objects.get(id=pk)
+    serializer = UserModelSerializer(user, many=False)
+    return Response(serializer.data)
+
+
 @api_view(["POST"])
 def logIn(request):
     email = request.data['email']
@@ -53,11 +61,9 @@ def apiOverview(request):
     return Response(api_urls)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def messageList(request):
-    messages = Message.objects.filter(destination=request.user.id)
-    print(request.user)
-    print(type(messages))
+    messages = Message.objects.filter(destination=request.data['id'])
     serializer = MessageSerializer(messages, many=True)
     return Response(serializer.data)
 
@@ -71,9 +77,10 @@ def messageDetail(request, pk):
 
 @api_view(['POST'])
 def messageCreate(request):
-    request.data['utilisateur'] = request.user.id
+    print(request.data)
     serializer = MessageSerializer(data=request.data)
     if serializer.is_valid():
+        print('valid')
         serializer.save()
     return Response(serializer.data)
 
@@ -106,12 +113,11 @@ def aiList(request):
     return Response(serializer.data)
 
 
-@api_view(['GET'])  # ordre
+@api_view(['POST'])  # ordre
 def myAiList(request):
     # user = CurrentUserDefault()
-    print(request.user.id)
-    AIs = AI.objects.all().filter(owner=request.user.id).order_by('-id')
-    print(AIs)
+    print(request.data['id'])
+    AIs = AI.objects.all().filter(owner=request.data['id']).order_by('-id')
     serializer = AiSreializer(AIs, many=True)
     return Response(serializer.data)
 
@@ -135,13 +141,10 @@ def aiDetail(request, pk):
 
 @api_view(['POST'])
 def aiCreate(request):
+    request.data['Signal'] = False
 
-    request.data['owner'] = request.user.id
-    request.data['Signal'] = True
     serializer = AiSreializer(data=request.data)
-    print()
     print(request.data)
-    print()
     if serializer.is_valid():
         serializer.save()
 
@@ -157,9 +160,9 @@ def aiUpdate(request, pk):
     return Response(serializer.data)
 
 
-@api_view(['DELETE'])
-def aiDelete(request, pk):
-    ai = AI.objects.filter(owner=request.user.id).get(id=pk)
+@api_view(['POST'])
+def aiDelete(request):
+    ai = AI.objects.get(id=request.data['id'])
     ai.delete()
     return Response("deleted successfully")
 
