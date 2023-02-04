@@ -15,6 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+# from rest_framework import routers
+# from PJP_API.views import ImageViewSet
+
+# router = routers.DefaultRouter()
+# router.register('images', ImageViewSet, basename='image')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

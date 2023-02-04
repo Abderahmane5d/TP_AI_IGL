@@ -2,7 +2,11 @@ from rest_framework import serializers
 from rest_framework.validators import ValidationError
 from .models import *
 
-
+class ImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Images
+        fields = '__all__'
+        
 class UserModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
