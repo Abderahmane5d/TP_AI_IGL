@@ -8,7 +8,7 @@ from .serializers import *
 
 from django.db.models import Q
 
-from rest_framework import status
+from rest_framework import permissions, status
 
 from django.contrib.auth import authenticate, login
 
@@ -17,6 +17,16 @@ from django.contrib.auth import authenticate, login
 # Create your views here.
 
 
+@api_view(['POST'])
+def createImages(request, pk):
+    try:
+        annonce=AI.objects.get(id=pk)
+        serializer = ImagesSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(ai=annonce)
+            return Response(status=status.HTTP_200_OK)
+    except AI.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 @api_view(['POST'])
 def userDetail(request):
     pk = request.data['owner']

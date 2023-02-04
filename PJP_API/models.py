@@ -146,7 +146,6 @@ class AI(models.Model):
     description = models.TextField()  # null = False (default)
     surface = models.IntegerField()  # en mètre carré
     price = models.IntegerField()
-    images = models.ImageField  # or Images = []
     # type = models.ForeignKey(Type, on_delete=models.CASCADE) # à revoir
     type = models.CharField(choices=TypeChoices.choices,
                             max_length=22)  # null = False (default)
@@ -162,3 +161,8 @@ class AI(models.Model):
     def __str__(self) -> str:
         return self.titre
 # fav use one one     fav ai many lany
+
+class Images(models.Model):
+    ai = models.ForeignKey(
+        AI,  on_delete=models.CASCADE, related_name='liste_images')
+    image = models.ImageField(upload_to='images')
