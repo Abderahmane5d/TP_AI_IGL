@@ -38,7 +38,9 @@ def userDetail(request):
 @api_view(["POST"])
 def logIn(request):
     email = request.data['email']
+
     user = UserModel.objects.all().filter(email=email)
+
     if user:
         # utilisateur existe
         user = UserModel.objects.get(email=email)
@@ -87,10 +89,9 @@ def messageDetail(request, pk):
 
 @api_view(['POST'])
 def messageCreate(request):
-    print(request.data)
     serializer = MessageSerializer(data=request.data)
     if serializer.is_valid():
-        print('valid')
+
         serializer.save()
     return Response(serializer.data)
 
