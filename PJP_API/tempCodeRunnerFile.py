@@ -1,0 +1,1 @@
+ self.assertEqual(result[0]["titre"], "annonce test")
