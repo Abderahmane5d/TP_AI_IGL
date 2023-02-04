@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
 
+    path('images/<str:pk>', views.createImages, name='images'),
 
     path('', views.apiOverview, name="api-overview"),
 
